@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script>
+  $(function () {
+    var socket = io();
+    $('form').submit(function () {
+      socket.emit('chat message', $('#m').val());
+      $('#m').val('');
+      return false;
+    });
+    socket.on('chat message', function (msg) {
+      $('#messages').append($('<li>').text(msg));
+    });
+    socket.on('chat connected', function () {
+      M.toast({ html: 'Se ha conectado un usuario' });
+    })
+
+  })
+</script>
+<style>
+</style>
+
+<body>
+  <header></header>
+  <main style="height: 85vh;">
+    <ul id="messages"></ul>
+  </main>
+  <footer class="page-footer white" style="position:fixed;bottom:0;left:0;width:100%; height:15vh;">
+    <div class="container">
+      <div class="col l12 s12">
+        <form>
+          <input class="input" id="m" autocomplete="off/">
+          <div class="fixed-action-btn">
+            <button class=" btn-floating btn-large teal">
+              <a><i class="material-icons">send</i></a>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
