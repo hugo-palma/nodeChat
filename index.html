@@ -2,42 +2,31 @@
 <html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
+<script src="https://unpkg.com/vue"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<script>
-  $(function () {
-    var socket = io();
-    $('form').submit(function () {
-      socket.emit('chat message', $('#m').val());
-      $('#m').val('');
-      return false;
-    });
-    socket.on('chat message', function (msg) {
-      $('#messages').append($('<li>').text(msg));
-    });
-    socket.on('chat connected', function () {
-      M.toast({ html: 'Se ha conectado un usuario' });
-    })
-
-  })
-</script>
-<style>
-</style>
 
 <body>
   <header></header>
-  <main style="height: 85vh;">
-    <ul id="messages"></ul>
+  <main class="teal" style="height: 85vh; overflow: auto;">
+    <div class="container" id="app-7">
+      <ul>
+        <message-item v-for="item in messageList" v-bind:message="item" v-bind:key="item.id">
+        </message-item>
+      </ul>
+    </div>
   </main>
-  <footer class="page-footer white" style="position:fixed;bottom:0;left:0;width:100%; height:15vh;">
+  <footer class="page-footer white z-depth-3" style="position:fixed;bottom:0;left:0;width:100%; height:15vh;">
     <div class="container">
       <div class="col l12 s12">
         <form>
           <input class="input" id="m" autocomplete="off/">
           <div class="fixed-action-btn">
-            <button class=" btn-floating btn-large teal">
-              <a><i class="material-icons">send</i></a>
+            <button class=" btn-floating btn-large teal z-depth-3">
+              <a>
+                <i class="material-icons">send</i>
+              </a>
             </button>
           </div>
         </form>
@@ -45,4 +34,43 @@
     </div>
   </footer>
 </body>
+<script>
+  window.onload = function () {
+    Vue.component('message-item', {
+      props: ['message'],
+      template: '<li>{{ message.text }}</li>'
+    })
+    let messages = new Vue({
+      el: '#app-7',
+      data: {
+        messageList: [
+        ]
+      },
+      methods: {
+        addMessage: function (msg) {
+          var nuevoMensaje = {
+            id: this.messageList.length + 1,
+            text: msg
+          }
+          this.messageList.push(nuevoMensaje);
+        }
+      }
+    });
+    $(function () {
+      var socket = io();
+      $('form').submit(function () {
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+      });
+      socket.on('chat message', function (msg) {
+        messages.addMessage(msg);
+      });
+      socket.on('chat connected', function () {
+        M.toast({ html: 'Se ha conectado un usuario' });
+      })
+    })
+  }
+</script>
+
 </html>
