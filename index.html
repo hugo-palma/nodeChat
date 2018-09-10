@@ -36,6 +36,7 @@
 </body>
 <script>
   window.onload = function () {
+    var sign = window.prompt('Ingresa tu nombre de usuario', '');
     Vue.component('message-item', {
       props: ['message'],
       template: '<li>{{ message.text }}</li>'
@@ -59,7 +60,7 @@
     $(function () {
       var socket = io();
       $('form').submit(function () {
-        socket.emit('chat message', $('#m').val());
+        socket.emit('chat message', sign + ": " + $('#m').val());
         $('#m').val('');
         return false;
       });

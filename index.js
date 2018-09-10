@@ -7,7 +7,10 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html')
 });
 app.get('/chat.html', function(req, res){
-    res.sendFile(__dirname + '/index.html')
+    res.sendFile(__dirname + '/index.html');
+});
+app.get('/vue', function(req, res){
+    res.sendFile(__dirname + '/vue.html')
 });
 io.on('connection', function(socket){
     socket.broadcast.emit('chat connected', true);
